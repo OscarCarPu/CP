@@ -4,8 +4,6 @@ use std::collections::HashSet;
 use std::io::{self, BufRead};
 use std::str::FromStr;
 
-const MOD: i64 = 1_000_000_007;
-
 struct Scanner<R> {
     reader: R,
     tokens: Vec<String>,
@@ -40,28 +38,36 @@ impl<R: BufRead> Scanner<R> {
     }
 }
 
-fn pow_mod(mut base: i64, mut exp: i64) {
-    let mut res = 1;
-    base %= MOD;
-    while exp > 0 {
-        if exp % 2 == 1 {
-            res = (res * base) % MOD;
-        }
-        exp /= 2;
-        base = (base * base) % MOD;
-    }
-    res
-}
-
 fn solve(sc: &mut Scanner<io::StdinLock>) {
-    let t: i64 = sc.next();
-
-    for _ in 0..t {
-        let n: i64 = sc.next();
-        println!("{}", n);
+    let n: i64 = sc.next();
+    let mut set_a = HashSet::new();
+    let mut set_b = HashSet::new();
+    let mut sum_a = 0;
+    let mut sum_b = 0;
+    for i in (1..=n).rev() {
+        if sum_a > sum_b {
+            set_b.insert(i);
+            sum_b += i;
+        } else {
+            set_a.insert(i);
+            sum_a += i;
+        }
+    }
+    if sum_a == sum_b {
+        println!("YES");
+        println!("{}", set_a.len());
+        for i in set_a {
+            print!("{} ", i);
+        }
+        println!();
+        println!("{}", set_b.len());
+        for i in set_b {
+            print!("{} ", i);
+        }
+    } else {
+        println!("NO");
     }
 }
-
 fn main() {
     let stdin = io::stdin();
     let mut scanner = Scanner::new(stdin.lock());

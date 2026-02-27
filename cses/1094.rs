@@ -4,8 +4,6 @@ use std::collections::HashSet;
 use std::io::{self, BufRead};
 use std::str::FromStr;
 
-const MOD: i64 = 1_000_000_007;
-
 struct Scanner<R> {
     reader: R,
     tokens: Vec<String>,
@@ -40,26 +38,21 @@ impl<R: BufRead> Scanner<R> {
     }
 }
 
-fn pow_mod(mut base: i64, mut exp: i64) {
-    let mut res = 1;
-    base %= MOD;
-    while exp > 0 {
-        if exp % 2 == 1 {
-            res = (res * base) % MOD;
-        }
-        exp /= 2;
-        base = (base * base) % MOD;
-    }
-    res
-}
-
 fn solve(sc: &mut Scanner<io::StdinLock>) {
     let t: i64 = sc.next();
 
+    let mut bigger: i64 = 0;
+    let mut sol: i64 = 0;
+
     for _ in 0..t {
         let n: i64 = sc.next();
-        println!("{}", n);
+        if n < bigger {
+            sol += bigger - n;
+        } else {
+            bigger = n;
+        }
     }
+    println!("{}", sol);
 }
 
 fn main() {

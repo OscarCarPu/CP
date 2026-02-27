@@ -40,26 +40,22 @@ impl<R: BufRead> Scanner<R> {
     }
 }
 
-fn pow_mod(mut base: i64, mut exp: i64) {
+fn pow_mod(mut base: i64, mut exp: i64) -> i64 {
     let mut res = 1;
     base %= MOD;
     while exp > 0 {
-        if exp % 2 == 1 {
+        if exp & 1 == 1 {
             res = (res * base) % MOD;
         }
-        exp /= 2;
+        exp >>= 1;
         base = (base * base) % MOD;
     }
     res
 }
 
 fn solve(sc: &mut Scanner<io::StdinLock>) {
-    let t: i64 = sc.next();
-
-    for _ in 0..t {
-        let n: i64 = sc.next();
-        println!("{}", n);
-    }
+    let n: i64 = sc.next();
+    println!("{}", pow_mod(2, n));
 }
 
 fn main() {
