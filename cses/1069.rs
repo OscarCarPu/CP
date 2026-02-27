@@ -1,0 +1,64 @@
+#![allow(unused_imports)]
+use std::cmp::{max, min};
+use std::collections::HashSet;
+use std::io::{self, BufRead};
+use std::str::FromStr;
+
+struct Scanner<R> {
+    reader: R,
+    tokens: Vec<String>,
+}
+
+impl<R: BufRead> Scanner<R> {
+    fn new(reader: R) -> Self {
+        Self {
+            reader,
+            tokens: Vec::new(),
+        }
+    }
+
+    fn next<T: FromStr>(&mut self) -> T {
+        while self.tokens.is_empty() {
+            let mut line = String::new();
+            self.reader
+                .read_line(&mut line)
+                .expect("Failed to read line");
+            self.tokens = line
+                .split_whitespace()
+                .rev()
+                .map(|s| s.to_string())
+                .collect();
+        }
+        self.tokens
+            .pop()
+            .expect("No more tokens")
+            .parse()
+            .ok()
+            .expect("Failed to parse")
+    }
+}
+
+fn solve(sc: &mut Scanner<io::StdinLock>) {
+    let dna: String = sc.next();
+    let mut cnt = 0;
+    let mut max_cnt = 0;
+    let mut last_c: char = '1';
+    for c in dna.chars() {
+        if c == last_c {
+            cnt += 1;
+        } else {
+            last_c = c;
+            max_cnt = max(max_cnt, cnt);
+            cnt = 1;
+        }
+    }
+    max_cnt = max(max_cnt, cnt);
+    println!("{}", max_cnt);
+}
+
+fn main() {
+    let stdin = io::stdin();
+    let mut scanner = Scanner::new(stdin.lock());
+
+    solve(&mut scanner);
+}
