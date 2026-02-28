@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 use std::cmp::{max, min};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::io::{self, BufRead};
 use std::str::FromStr;
 
@@ -57,10 +57,13 @@ fn pow_mod(mut base: i64, mut exp: i64) -> i64 {
 
 fn solve(sc: &mut Scanner<io::StdinLock>) {
     let t: i64 = sc.next();
-
-    for _ in 0..t {
-        let n: i64 = sc.next();
-        println!("{}", n);
+    let mut sol = 0;
+    for p in 1..=t {
+        if 5_i64.pow(p as u32) > t {
+            println!("{}", sol);
+            return;
+        }
+        sol += t / 5_i64.pow(p as u32);
     }
 }
 

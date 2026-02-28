@@ -56,12 +56,41 @@ fn pow_mod(mut base: i64, mut exp: i64) -> i64 {
 }
 
 fn solve(sc: &mut Scanner<io::StdinLock>) {
-    let t: i64 = sc.next();
-
-    for _ in 0..t {
-        let n: i64 = sc.next();
-        println!("{}", n);
+    let s: String = sc.next();
+    let mut freq: HashMap<char, i64> = HashMap::new();
+    for c in s.chars() {
+        freq.entry(c).and_modify(|c| *c += 1).or_insert(1);
     }
+    let mut char_impar: Option<char> = None;
+    for (c, f) in freq.iter() {
+        if f % 2 == 1 {
+            if char_impar != None {
+                println!("NO SOLUTION");
+                return;
+            } else {
+                char_impar = Some(*c);
+            }
+        }
+    }
+    let mut first_half = String::new();
+    for (c, f) in freq.iter() {
+        if Some(*c) == char_impar {
+            continue;
+        }
+        for _ in 1..=f / 2 {
+            first_half.push(*c);
+        }
+    }
+    let mut middle = String::new();
+    if let Some(c) = char_impar {
+        for _ in 0..*freq.get(&c).unwrap() {
+            middle.push(c);
+        }
+    }
+    println!(
+        "{}",
+        first_half.clone() + &middle + &first_half.chars().rev().collect::<String>()
+    );
 }
 
 fn main() {

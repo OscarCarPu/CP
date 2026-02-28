@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 use std::cmp::{max, min};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::io::{self, BufRead};
 use std::str::FromStr;
 
@@ -59,8 +59,13 @@ fn solve(sc: &mut Scanner<io::StdinLock>) {
     let t: i64 = sc.next();
 
     for _ in 0..t {
-        let n: i64 = sc.next();
-        println!("{}", n);
+        let a: i64 = sc.next();
+        let b: i64 = sc.next();
+        if max(a, b) > 2 * min(a, b) || (a + b) % 3 != 0 {
+            println!("NO");
+        } else {
+            println!("YES");
+        }
     }
 }
 
