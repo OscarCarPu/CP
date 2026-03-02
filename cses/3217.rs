@@ -61,11 +61,47 @@ fn mex(set: &HashSet<usize>) -> usize {
 }
 
 fn solve(sc: &mut Scanner<io::StdinLock>) {
-    let t: usize = sc.next();
+    let n: usize = sc.next();
 
-    for _ in 0..t {
-        let n: usize = sc.next();
-        println!("{}", n);
+    let mut board: Vec<Vec<usize>> = vec![vec![usize::MAX; n]; n];
+    let mut queue: VecDeque<(usize, usize, usize)> = VecDeque::new();
+    queue.push_back((0, 0, 0));
+    while let Some((i, j, d)) = queue.pop_front() {
+        if board[i][j] != usize::MAX {
+            continue;
+        }
+        board[i][j] = d;
+        if i + 2 < n && j + 1 < n && board[i + 2][j + 1] == usize::MAX {
+            queue.push_back((i + 2, j + 1, d + 1));
+        }
+        if i + 2 < n && j >= 1 && board[i + 2][j - 1] == usize::MAX {
+            queue.push_back((i + 2, j - 1, d + 1));
+        }
+        if i >= 2 && j + 1 < n && board[i - 2][j + 1] == usize::MAX {
+            queue.push_back((i - 2, j + 1, d + 1));
+        }
+        if i >= 2 && j >= 1 && board[i - 2][j - 1] == usize::MAX {
+            queue.push_back((i - 2, j - 1, d + 1));
+        }
+        if i + 1 < n && j + 2 < n && board[i + 1][j + 2] == usize::MAX {
+            queue.push_back((i + 1, j + 2, d + 1));
+        }
+        if i + 1 < n && j >= 2 && board[i + 1][j - 2] == usize::MAX {
+            queue.push_back((i + 1, j - 2, d + 1));
+        }
+        if i >= 1 && j + 2 < n && board[i - 1][j + 2] == usize::MAX {
+            queue.push_back((i - 1, j + 2, d + 1));
+        }
+        if i >= 1 && j >= 2 && board[i - 1][j - 2] == usize::MAX {
+            queue.push_back((i - 1, j - 2, d + 1));
+        }
+    }
+
+    for i in 0..n {
+        for j in 0..n {
+            print!("{} ", board[i][j]);
+        }
+        println!();
     }
 }
 

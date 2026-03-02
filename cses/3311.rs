@@ -61,11 +61,23 @@ fn mex(set: &HashSet<usize>) -> usize {
 }
 
 fn solve(sc: &mut Scanner<io::StdinLock>) {
-    let t: usize = sc.next();
-
-    for _ in 0..t {
-        let n: usize = sc.next();
-        println!("{}", n);
+    let (n, m): (usize, usize) = (sc.next(), sc.next());
+    let mut grid: Vec<Vec<char>> = vec![vec!['a'; m]; n];
+    for i in 0..n {
+        grid[i] = sc.next::<String>().chars().collect();
+        for j in 0..m {
+            let mut pos: HashSet<char> = HashSet::from(['A', 'B', 'C', 'D']);
+            pos.remove(&grid[i][j]);
+            if i > 0 {
+                pos.remove(&grid[i - 1][j]);
+            }
+            if j > 0 {
+                pos.remove(&grid[i][j - 1]);
+            }
+            grid[i][j] = *pos.iter().next().unwrap();
+            print!("{}", grid[i][j]);
+        }
+        println!();
     }
 }
 
