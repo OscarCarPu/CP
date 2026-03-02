@@ -19,7 +19,6 @@ impl<R: BufRead> Scanner<R> {
             tokens: Vec::new(),
         }
     }
-
     fn next<T: FromStr>(&mut self) -> T {
         while self.tokens.is_empty() {
             let mut line = String::new();
@@ -61,17 +60,23 @@ fn mex(set: &HashSet<usize>) -> usize {
 }
 
 fn solve(sc: &mut Scanner<io::StdinLock>) {
-    let t: usize = sc.next();
-
-    for _ in 0..t {
-        let n: usize = sc.next();
-        println!("{}", n);
+    let n: usize = sc.next();
+    let mut sol: Vec<Vec<usize>> = vec![vec![0; n]; n];
+    let mut rowset: Vec<HashSet<usize>> = vec![HashSet::new(); n];
+    let mut colset: Vec<HashSet<usize>> = vec![HashSet::new(); n];
+    for i in 0..n {
+        for j in 0..n {
+            let union: HashSet<usize> = rowset[i].union(&colset[j]).cloned().collect();
+            sol[i][j] = mex(&union);
+            rowset[i].insert(sol[i][j]);
+            colset[j].insert(sol[i][j]);
+            print!("{} ", sol[i][j]);
+        }
+        println!();
     }
 }
-
 fn main() {
     let stdin = io::stdin();
     let mut scanner = Scanner::new(stdin.lock());
-
     solve(&mut scanner);
 }
