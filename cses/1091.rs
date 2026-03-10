@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 use std::cmp::{max, min};
-use std::collections::{BTreeMap, BinaryHeap, HashMap, HashSet, VecDeque};
+use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::io::{self, BufRead};
 use std::str::FromStr;
 
@@ -61,11 +61,25 @@ fn mex(set: &HashSet<usize>) -> usize {
 }
 
 fn solve(sc: &mut Scanner<io::StdinLock>) {
-    let t: usize = sc.next();
+    let (n, m): (usize, usize) = (sc.next(), sc.next());
+    let mut prices: BTreeMap<usize, usize> = BTreeMap::new();
+    for _ in 0..n {
+        let price: usize = sc.next();
+        *prices.entry(price).or_insert(0) += 1;
+    }
 
-    for _ in 0..t {
-        let n: usize = sc.next();
-        println!("{}", n);
+    for _ in 0..m {
+        let customer: usize = sc.next();
+        if let Some((&price, count)) = prices.range(..=customer).next_back() {
+            println!("{}", price);
+            if *count == 1 {
+                prices.remove(&price);
+            } else {
+                *prices.get_mut(&price).unwrap() -= 1;
+            }
+        } else {
+            println!("-1");
+        }
     }
 }
 
