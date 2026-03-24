@@ -60,14 +60,29 @@ fn mex(set: &HashSet<usize>) -> usize {
     (0..).find(|i| !set.contains(i)).unwrap()
 }
 
-fn solve(sc: &mut Scanner<io::StdinLock>) {}
+fn solve(sc: &mut Scanner<io::StdinLock>) {
+    let n: usize = sc.next();
+    let mut deq = VecDeque::new();
+    let mut set = HashSet::new();
+    let mut sol = 0;
+    for _ in 0..n {
+        let x: usize = sc.next();
+        if set.contains(&x) {
+            sol = max(sol, set.len());
+            while set.contains(&x) {
+                set.remove(&deq.pop_back().unwrap());
+            }
+        }
+        deq.push_front(x);
+        set.insert(x);
+    }
+    sol = max(sol, set.len());
+    println!("{}", sol);
+}
 
 fn main() {
     let stdin = io::stdin();
     let mut scanner = Scanner::new(stdin.lock());
-    let t = scanner.next();
 
-    for _ in 0..t {
-        solve(&mut scanner);
-    }
+    solve(&mut scanner);
 }

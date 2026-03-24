@@ -60,14 +60,32 @@ fn mex(set: &HashSet<usize>) -> usize {
     (0..).find(|i| !set.contains(i)).unwrap()
 }
 
-fn solve(sc: &mut Scanner<io::StdinLock>) {}
+fn solve(sc: &mut Scanner<io::StdinLock>) {
+    let n: usize = sc.next();
+    let mut towers: BTreeMap<usize, usize> = BTreeMap::new();
+    for _ in 0..n {
+        let x: usize = sc.next();
+        match towers.range((x + 1)..).next() {
+            None => {}
+            Some((&next, &cnt)) => {
+                if cnt == 1 {
+                    towers.remove(&next);
+                } else {
+                    *towers.get_mut(&next).unwrap() -= 1;
+                }
+            }
+        }
+        *towers.entry(x).or_insert(0) += 1;
+    }
+    let mut sol = 0;
+    for (_, cnt) in towers.iter() {
+        sol += cnt;
+    }
+    println!("{}", sol);
+}
 
 fn main() {
     let stdin = io::stdin();
     let mut scanner = Scanner::new(stdin.lock());
-    let t = scanner.next();
-
-    for _ in 0..t {
-        solve(&mut scanner);
-    }
+    solve(&mut scanner);
 }
