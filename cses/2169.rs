@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 use std::cmp::{max, min};
-use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque};
+use std::collections::{BTreeMap, BinaryHeap, HashMap, HashSet, VecDeque};
 use std::io::{self, BufRead};
 use std::str::FromStr;
 #[allow(unused)]
@@ -86,13 +86,68 @@ impl Fenwick {
     }
 }
 
-fn solve(sc: &mut Scanner<io::StdinLock>) {}
+fn solve(sc: &mut Scanner<io::StdinLock>) {
+    let n: usize = sc.next();
+    let mut ranges: Vec<(i64, i64, usize)> = (0..n)
+        .map(|i| {
+            let x: i64 = sc.next();
+            let y: i64 = sc.next();
+            (x, y, i)
+        })
+        .collect();
+
+    ranges.sort_unstable_by(|a, b| a.0.cmp(&b.0).then(b.1.cmp(&a.1)));
+
+    let mut sorted_r: Vec<i64> = ranges.iter().map(|&(_, r, _)| r).collect();
+    sorted_r.sort_unstable();
+    sorted_r.dedup();
+    let compress = |r: i64| sorted_r.partition_point(|&x| x < r) + 1; // 1-indexed
+
+    let m = sorted_r.len();
+    let mut contains = vec![0i64; n];
+    let mut contained = vec![0i64; n];
+
+    let mut fen = vec![0i64; m + 1];
+    let fen_update = |fen: &mut Vec<i64>, mut i: usize, delta: i64| {
+        while i <= m {
+            fen[i] += delta;
+            i += i & i.wrapping_neg();
+        }
+    };
+    let fen_query = |fen: &Vec<i64>, mut i: usize| -> i64 {
+        let mut s = 0i64;
+        while i > 0 {
+            s += fen[i];
+            i -= i & i.wrapping_neg();
+        }
+        s
+    };
+
+    for &(_, r, idx) in &ranges {
+        let cr = compress(r);
+        let total = fen_query(&fen, m);
+        let below = fen_query(&fen, cr - 1);
+        contained[idx] = total - below;
+        fen_update(&mut fen, cr, 1);
+    }
+
+    let mut fen2 = vec![0i64; m + 1];
+    for &(_, r, idx) in ranges.iter().rev() {
+        let cr = compress(r);
+        contains[idx] = fen_query(&fen2, cr);
+        fen_update(&mut fen2, cr, 1);
+    }
+
+    for i in 0..n {
+        print!("{}{}", contains[i], if i < n - 1 { " " } else { "\n" });
+    }
+    for i in 0..n {
+        print!("{}{}", contained[i], if i < n - 1 { " " } else { "\n" });
+    }
+}
 
 fn main() {
     let stdin = io::stdin();
     let mut scanner = Scanner::new(stdin.lock());
-    let t: usize = scanner.next();
-    for _ in 0..t {
-        solve(&mut scanner);
-    }
+    solve(&mut scanner);
 }
