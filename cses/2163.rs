@@ -86,13 +86,25 @@ impl Fenwick {
     }
 }
 
-fn solve(sc: &mut Scanner<io::StdinLock>) {}
+fn solve(sc: &mut Scanner<io::StdinLock>) {
+    let n: usize = sc.next();
+    let k: usize = sc.next();
+    let mut ft = Fenwick::new(n);
+    let mut cur = 0usize;
+    for alive in (1..=n).rev() {
+        cur = (cur + k) % alive;
+        let pos = ft.find_kth(cur as i64 + 1);
+        print!("{}", pos);
+        if alive > 1 {
+            print!(" ");
+        }
+        ft.update(pos, -1);
+    }
+    println!();
+}
 
 fn main() {
     let stdin = io::stdin();
     let mut scanner = Scanner::new(stdin.lock());
-    let t: usize = scanner.next();
-    for _ in 0..t {
-        solve(&mut scanner);
-    }
+    solve(&mut scanner);
 }
