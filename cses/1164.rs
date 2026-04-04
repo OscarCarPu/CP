@@ -36,7 +36,6 @@ impl<R: BufRead> Scanner<R> {
             .expect("Failed to parse")
     }
 }
-
 #[allow(unused)]
 fn pow_mod(mut base: usize, mut exp: usize) -> usize {
     let mut res = 1;
@@ -57,6 +56,7 @@ struct MexSet {
     absent: BTreeSet<usize>,
     max_val: usize,
 }
+
 #[allow(unused)]
 impl MexSet {
     fn new(max_val: usize) -> Self {
@@ -114,13 +114,41 @@ impl Fenwick {
     }
 }
 
-fn solve(sc: &mut Scanner<io::StdinLock>) {}
+fn solve(sc: &mut Scanner<io::StdinLock>) {
+    let n = sc.next();
+    let mut customers: Vec<(usize, isize, usize)> = Vec::new();
+    for i in 0..n {
+        let (a, b) = (sc.next(), sc.next());
+        customers.push((a, 1, i));
+        customers.push((b, -1, i));
+    }
+    customers.sort_by(|a, b| a.0.cmp(&b.0).then(b.1.cmp(&a.1)));
+    let (mut sol, mut act) = (0, 0);
+    let mut v_sol: Vec<(usize, usize)> = Vec::new();
+    let mut rooms = MexSet::new(n + 1);
+    let mut cus_rooms: HashMap<usize, usize> = HashMap::new();
+    for (_, x, i) in customers {
+        if x == 1 {
+            let me = rooms.mex();
+            v_sol.push((i, me));
+            rooms.insert(me);
+            cus_rooms.insert(i, me);
+        } else {
+            rooms.remove(*cus_rooms.get(&i).unwrap());
+            cus_rooms.remove(&i);
+        }
+        act += x;
+        sol = max(sol, act);
+    }
+    println!("{}", sol);
+    v_sol.sort_by(|a, b| a.0.cmp(&b.0));
+    for (_, r) in v_sol {
+        print!("{} ", r + 1);
+    }
+}
 
 fn main() {
     let stdin = io::stdin();
     let mut scanner = Scanner::new(stdin.lock());
-    let t: usize = scanner.next();
-    for _ in 0..t {
-        solve(&mut scanner);
-    }
+    solve(&mut scanner);
 }
