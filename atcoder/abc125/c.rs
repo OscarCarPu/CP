@@ -124,13 +124,27 @@ fn gcd(mut a: usize, mut b: usize) -> usize {
     a
 }
 
-fn solve(sc: &mut Scanner<io::StdinLock>) {}
+fn solve(sc: &mut Scanner<io::StdinLock>) {
+    let n: usize = sc.next();
+    let (mut pgcdl, mut pgcdr) = (vec![0; n], vec![0; n]);
+    let v: Vec<usize> = (0..n).map(|_| sc.next()).collect();
+    pgcdl[0] = v[0];
+    pgcdr[n - 1] = v[n - 1];
+    for i in 1..n {
+        pgcdl[i] = gcd(pgcdl[i - 1], v[i]);
+    }
+    for i in (0..n - 1).rev() {
+        pgcdr[i] = gcd(pgcdr[i + 1], v[i]);
+    }
+    let mut sol = max(pgcdl[n - 1], max(pgcdl[n - 2], pgcdr[1]));
+    for i in 1..n - 1 {
+        sol = max(sol, gcd(pgcdl[i - 1], pgcdr[i + 1]));
+    }
+    println!("{}", sol);
+}
 
 fn main() {
     let stdin = io::stdin();
     let mut scanner = Scanner::new(stdin.lock());
-    let t: usize = scanner.next();
-    for _ in 0..t {
-        solve(&mut scanner);
-    }
+    solve(&mut scanner);
 }

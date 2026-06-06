@@ -124,7 +124,28 @@ fn gcd(mut a: usize, mut b: usize) -> usize {
     a
 }
 
-fn solve(sc: &mut Scanner<io::StdinLock>) {}
+fn solve(sc: &mut Scanner<io::StdinLock>) {
+    let n: usize = sc.next();
+    let s: String = sc.next();
+    let v: Vec<isize> = s.bytes().map(|b| (b - b'0') as isize).collect();
+
+    let mut p = vec![0isize; n];
+    for i in 0..n {
+        p[i] = v[i] - 1;
+        if i > 0 {
+            p[i] += p[i - 1];
+        }
+    }
+
+    let mut count: HashMap<isize, isize> = HashMap::new();
+    let mut sol = 0;
+    count.insert(0, 1);
+    for i in 0..n {
+        sol += count.get(&p[i]).unwrap_or(&0);
+        count.entry(p[i]).and_modify(|c| *c += 1).or_insert(1);
+    }
+    println!("{}", sol);
+}
 
 fn main() {
     let stdin = io::stdin();
